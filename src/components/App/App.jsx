@@ -18,16 +18,15 @@ const App = () => {
 	const [totalImages, setTotalImages] = useState(0);
 
 	useEffect(() => {
-		if (!query) {
-			return;
-		}
+		if (!query) return;
 
-		const fetchData = async () => {
+		const fetchAndSetImages = async () => {
 			setError(null);
 			setLoading(true);
+
 			try {
 				const data = await fetchImages(query, page);
-				setImages((prevImages) => [...prevImages, ...data.results]);
+				setImages((prev) => [...prev, ...data.results]);
 				setTotalImages(data.total);
 			} catch {
 				setError("Error fetching images!");
@@ -37,13 +36,11 @@ const App = () => {
 			}
 		};
 
-		fetchData();
+		fetchAndSetImages();
 	}, [query, page]);
 
 	const handleSearch = (newQuery) => {
-		if (query === newQuery) {
-			return;
-		}
+		if (newQuery === query) return;
 		setQuery(newQuery);
 		setPage(1);
 		setImages([]);
@@ -59,15 +56,22 @@ const App = () => {
 		setModalImage(null);
 	};
 
+	const loadMore = () => {
+		setPage((prevPage) => prevPage + 1);
+	};
+
 	return (
 		<div className={css.container}>
 			<SearchBar onSubmit={handleSearch} />
+
 			{error && <ErrorMessage message={error} />}
+
 			<ImageGallery images={images} onImageClick={handleImageClick} />
+
 			{loading && <Loader />}
-			{images.length > 0 && images.length < totalImages && !loading && (
-				<LoadMoreBtn onClick={() => setPage((prev) => prev + 1)} />
-			)}
+
+			{images.length > 0 && images.length < totalImages && !loading && <LoadMoreBtn onClick={loadMore} />}
+
 			{modalImage && <ImageModal image={modalImage} onClose={closeModal} />}
 		</div>
 	);

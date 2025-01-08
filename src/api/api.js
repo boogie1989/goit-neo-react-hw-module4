@@ -1,5 +1,7 @@
 import axios from "axios";
 
+console.log(import.meta.env);
+
 axios.defaults.baseURL = "https://api.unsplash.com";
 axios.defaults.headers.common["Authorization"] = `Client-ID ${import.meta.env.VITE_API_KEY}`;
 
